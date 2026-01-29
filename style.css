@@ -62,3 +62,430 @@ em {
     font-weight: 400;
     font-style: normal;
 }
+
+ * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            /* Cambiado a Roboto */
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Video Hero Section */
+        .video-hero {
+            width: 100%;
+            height: 90vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .hero-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .video-text {
+            text-align: center;
+            color: white;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+        
+        .video-text h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            /* Cambiado a Roboto 700 (Bold) */
+            font-weight: 700;
+        }
+        
+        .video-text p {
+            font-size: 1.3rem;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+            /* Cambiado a Roboto 400 (Regular) */
+            font-weight: 400;
+        }
+        
+        /* Title and Intro Section */
+        .title-intro {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 20px 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #8c3c2d;
+            font-size: 3.6rem;
+            margin-bottom: 25px;
+            /* Cambiado a Roboto 900 (Black) */
+            font-weight: 900;
+            line-height: 1.2;
+        }
+        
+        .intro {
+            font-size: 1.3rem;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.8;
+            /* Cambiado a Roboto 300 (Light) */
+            font-weight: 300;
+        }
+        
+        .divider {
+            width: 150px;
+            height: 4px;
+            background-color: #d4b483;
+            margin: 40px auto;
+            border-radius: 2px;
+        }
+        
+        /* Image Section - Full Width */
+        .image-section {
+            width: 100%;
+            position: relative;
+            margin-bottom: 60px;
+        }
+        
+        .main-image {
+            width: 100%;
+            display: block;
+            max-height: 120vh;
+            object-fit: cover;
+        }
+        
+        .marker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: #d43f2d;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Cambiado a Roboto 700 (Bold) */
+            font-weight: 700;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            border: 3px solid white;
+            font-size: 1.0rem;
+        }
+        
+        .marker:hover {
+            background-color: #8c3c2d;
+            transform: translate(-50%, -50%) scale(1.25);
+            z-index: 100;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.98);
+            border-left: 5px solid #d43f2d;
+            border-radius: 8px;
+            padding: 20px;
+            width: 320px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s, visibility 0.4s;
+            backdrop-filter: blur(8px);
+        }
+        
+        .tooltip.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .tooltip h3 {
+            color: #8c3c2d;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            /* Cambiado a Roboto 700 (Bold) */
+            font-weight: 700;
+        }
+        
+        .tooltip p {
+            color: #444;
+            font-size: 0.8rem;
+            line-height: 1.2rem;
+            /* Cambiado a Roboto 400 (Regular) */
+            font-weight: 400;
+        }
+        
+        .tooltip-close {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .tooltip-close:hover {
+            background-color: #f5f5f5;
+            color: #d43f2d;
+        }
+        
+        /* Longform Content */
+        .longform-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        
+        .longform-section {
+            margin-bottom: 70px;
+        }
+        
+        .section-title {
+            color: #8c3c2d;
+            font-size: 2.3rem;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0e6d6;
+            /* Cambiado a Roboto 700 (Bold) */
+            font-weight: 700;
+        }
+        
+        .section-text {
+            font-size: 1.2rem;
+            color: #444;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            /* Cambiado a Roboto 300 (Light) */
+            font-weight: 300;
+        }
+        
+        .longform-image {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin: 40px 0;
+            display: block;
+        }
+        
+        .image-caption {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 1rem;
+            /* Cambiado a Roboto 300 (Light) */
+            font-weight: 300;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            padding: 60px 0;
+            margin: 70px 0;
+            border-top: 2px solid #f0e6d6;
+            border-bottom: 2px solid #f0e6d6;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 40px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            color: #8c3c2d;
+            /* Cambiado a Roboto 900 (Black) */
+            font-weight: 900;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 1.2rem;
+            /* Cambiado a Roboto 500 (Medium) */
+            font-weight: 500;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #f9f5f0;
+            color: #333;
+            padding: 60px 20px;
+            margin-top: 80px;
+        }
+        
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            font-size: 2.2rem;
+            color: #8c3c2d;
+            margin-bottom: 25px;
+            /* Cambiado a Roboto 900 (Black) */
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+        
+        .footer-text {
+            color: #666;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            /* Cambiado a Roboto 300 (Light) */
+            font-weight: 300;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .video-text h2 {
+                font-size: 2.8rem;
+            }
+            
+            h1 {
+                font-size: 2.7rem;
+            }
+            
+            .marker {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+            
+            .tooltip {
+                width: 280px;
+                padding: 18px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .video-hero {
+                height: 60vh;
+            }
+            
+            .video-text h2 {
+                font-size: 2.2rem;
+            }
+            
+            .video-text p {
+                font-size: 1.1rem;
+            }
+            
+            h1 {
+                font-size: 2.3rem;
+            }
+            
+            .intro {
+                font-size: 1.15rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .section-text {
+                font-size: 1.1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+            
+            .main-image {
+                max-height: 70vh;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .video-hero {
+                height: 50vh;
+            }
+            
+            .video-text h2 {
+                font-size: 1.4rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .marker {
+                width: 32px;
+                height: 32px;
+                font-size: 0.5rem;
+            }
+            
+            .tooltip {
+                width: 160px;
+                padding: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .title-intro {
+                padding: 40px 20px 30px;
+            }
+            
+            .longform-container {
+                padding: 40px 20px;
+            }
+            
+            .main-image {
+                max-height: 60vh;
+            }
+        }
