@@ -12,8 +12,127 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="style.css" rel="stylesheet" />
+    <style>
+        /* Estilos para el botón de control de audio */
+        .audio-control-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(44, 62, 80, 0.9);
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .audio-control-btn:hover {
+            background-color: rgba(44, 62, 80, 1);
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+        
+        .audio-control-btn.muted {
+            background-color: rgba(231, 76, 60, 0.9);
+        }
+        
+        .audio-control-btn.muted:hover {
+            background-color: rgba(231, 76, 60, 1);
+        }
+        
+        .audio-control-btn .sound-wave {
+            display: inline-block;
+            animation: soundWave 1.5s infinite ease-in-out;
+        }
+        
+        @keyframes soundWave {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        /* Audio oculto */
+        #background-audio {
+            display: none;
+        }
+        
+        /* Notificación de audio */
+        .audio-notification {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background-color: rgba(44, 62, 80, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 999;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease;
+            display: none;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .audio-notification button {
+            background: none;
+            border: none;
+            color: white;
+            font-weight: bold;
+            margin-left: 10px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        /* Para dispositivos móviles */
+        @media (max-width: 768px) {
+            .audio-control-btn {
+                width: 50px;
+                height: 50px;
+                bottom: 15px;
+                right: 15px;
+                font-size: 20px;
+            }
+            
+            .audio-notification {
+                top: 60px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Audio de fondo que se reproduce automáticamente -->
+    <audio id="background-audio" autoplay loop>
+        <source src="shikumen-background-sound.mp3" type="audio/mp3">
+        <source src="shikumen-background-sound.ogg" type="audio/ogg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+    
+    <!-- Botón de control de audio fijo -->
+    <button id="audioControlBtn" class="audio-control-btn" title="Controlar audio de fondo">
+        <i class="fas fa-volume-up"></i>
+    </button>
+    
+    <!-- Notificación de audio -->
+    <div id="audioNotification" class="audio-notification">
+        Se está reproduciendo audio de fondo. 
+        <button id="dismissAudioNotification">Entendido</button>
+    </div>
+    
     <!-- Video Hero Section -->
     <nav class="w-100 bg-primary fixed-top p-0 shadow-sm">
         <h6 class="text-center text-white p-1 m-0">China Daily Graphics</h6>
@@ -63,7 +182,9 @@
     
     <!-- Imagen a todo ancho con Tooltips -->
     <section class="image-section full-width-image-section">
-        <img src="main-shikumen-clean.jpg" alt="Histórico <i>shikumen</i> en Shanghái" class="w-100">
+         <video autoplay loop width="100%" poster="anim-compound-prev.jpg" muted>
+            <source src="shikumen-live-sound.mp4" type="video/mp4">
+        </video>
         
         <!-- Marcadores con tooltips -->
         <div class="marker" style="top: 55%; left: 18%;" data-tooltip="1">
@@ -211,7 +332,7 @@
                     <div class="carousel-item active">
                         <div class="carousel-content">
                            <img src="door01.jpg" class="longform-image">
-                            <p class="stat-description">No 913, Siming village, Yan’an Middle Road</p>
+                            <p class="stat-description">No 913, Siming village, Yan'an Middle Road</p>
                         </div>
                     </div>
                     <div class="carousel-item">
@@ -282,6 +403,91 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // ==============================================
+            // CONTROL DE AUDIO DE FONDO
+            // ==============================================
+            const backgroundAudio = document.getElementById('background-audio');
+            const audioControlBtn = document.getElementById('audioControlBtn');
+            const audioNotification = document.getElementById('audioNotification');
+            const dismissAudioNotification = document.getElementById('dismissAudioNotification');
+            
+            let isAudioPlaying = true;
+            let userInteracted = false;
+            
+            // Mostrar notificación de audio después de 2 segundos
+            setTimeout(() => {
+                if (isAudioPlaying && !localStorage.getItem('audioNotificationDismissed')) {
+                    audioNotification.style.display = 'block';
+                    setTimeout(() => {
+                        audioNotification.style.display = 'none';
+                    }, 10000); // Ocultar después de 10 segundos
+                }
+            }, 2000);
+            
+            // Descartar notificación
+            dismissAudioNotification.addEventListener('click', function() {
+                audioNotification.style.display = 'none';
+                localStorage.setItem('audioNotificationDismissed', 'true');
+            });
+            
+            // Intentar reproducir audio automáticamente
+            function playBackgroundAudio() {
+                if (backgroundAudio) {
+                    backgroundAudio.play().then(() => {
+                        console.log("Audio de fondo se está reproduciendo");
+                        isAudioPlaying = true;
+                        updateAudioButton();
+                    }).catch(e => {
+                        console.log("Autoplay de audio restringido:", e);
+                        // Si falla el autoplay, esperar interacción del usuario
+                        document.addEventListener('click', initAudioOnUserInteraction, { once: true });
+                        document.addEventListener('keydown', initAudioOnUserInteraction, { once: true });
+                    });
+                }
+            }
+            
+            // Inicializar audio cuando el usuario interactúe
+            function initAudioOnUserInteraction() {
+                if (!userInteracted) {
+                    userInteracted = true;
+                    backgroundAudio.play().then(() => {
+                        isAudioPlaying = true;
+                        updateAudioButton();
+                    });
+                }
+            }
+            
+            // Actualizar apariencia del botón
+            function updateAudioButton() {
+                if (isAudioPlaying) {
+                    audioControlBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    audioControlBtn.classList.remove('muted');
+                    audioControlBtn.title = 'Silenciar audio de fondo';
+                } else {
+                    audioControlBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    audioControlBtn.classList.add('muted');
+                    audioControlBtn.title = 'Activar audio de fondo';
+                }
+            }
+            
+            // Alternar audio al hacer clic en el botón
+            audioControlBtn.addEventListener('click', function() {
+                if (isAudioPlaying) {
+                    backgroundAudio.pause();
+                    isAudioPlaying = false;
+                } else {
+                    backgroundAudio.play();
+                    isAudioPlaying = true;
+                }
+                updateAudioButton();
+            });
+            
+            // Iniciar reproducción de audio
+            playBackgroundAudio();
+            
+            // ==============================================
+            // CÓDIGO EXISTENTE PARA TOOLTIPS Y CARRUSEL
+            // ==============================================
             const markers = document.querySelectorAll('.marker');
             const closeButtons = document.querySelectorAll('.tooltip-close');
             
@@ -376,15 +582,6 @@
                     adjustTooltipPosition(marker, tooltip);
                 });
             });
-            
-            // Reproducir video automáticamente
-            const video = document.querySelector('.hero-video');
-            if (video) {
-                video.play().catch(e => {
-                    console.log("Autoplay restringido, mostrando controles");
-                    video.controls = true;
-                });
-            }
             
             // Configurar el carrusel para cambiar automáticamente cada 5 segundos
             const statsCarousel = document.getElementById('statsCarousel');
