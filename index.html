@@ -13,125 +13,181 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="style.css" rel="stylesheet" />
     <style>
-        /* Estilos para el botón de control de audio */
-        .audio-control-btn {
-            position: fixed;
-            bottom: 20px;
+        /* Estilos para el botón de control de audio en la imagen grande */
+        .image-section.full-width-image-section {
+            position: relative;
+        }
+        
+        /* Contenedor principal de audio */
+        .audio-control-container {
+            position: absolute;
+            top: 20px;
             right: 20px;
-            width: 60px;
-            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+        }
+        
+        .audio-control-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+        
+        /* Botón de audio con color cyan y animación */
+        .section-audio-control {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background-color: rgba(44, 62, 80, 0.9);
+            background: linear-gradient(135deg, #00bcd4, #0097a7);
             color: white;
-            border: none;
+            border: 2px solid rgba(255, 255, 255, 0.8);
             cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 188, 212, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 20px;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         
-        .audio-control-btn:hover {
-            background-color: rgba(44, 62, 80, 1);
+        /* Animación tenue de pulso */
+        .section-audio-control::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            animation: gentlePulse 2s infinite ease-in-out;
+            z-index: -1;
+        }
+        
+        @keyframes gentlePulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.05); opacity: 0.5; }
+        }
+        
+        .section-audio-control:hover {
+            background: linear-gradient(135deg, #00acc1, #00838f);
             transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 6px 20px rgba(0, 188, 212, 0.6);
         }
         
-        .audio-control-btn.muted {
-            background-color: rgba(231, 76, 60, 0.9);
+        .section-audio-control.muted {
+            background: linear-gradient(135deg, #78909c, #546e7a);
+            box-shadow: 0 4px 15px rgba(120, 144, 156, 0.4);
         }
         
-        .audio-control-btn.muted:hover {
-            background-color: rgba(231, 76, 60, 1);
+        .section-audio-control.muted::before {
+            animation: none;
+            background: rgba(255, 255, 255, 0.1);
         }
         
-        .audio-control-btn .sound-wave {
-            display: inline-block;
-            animation: soundWave 1.5s infinite ease-in-out;
+        .section-audio-control.muted:hover {
+            background: linear-gradient(135deg, #607d8b, #455a64);
+            box-shadow: 0 6px 20px rgba(120, 144, 156, 0.6);
         }
         
-        @keyframes soundWave {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        
-        /* Audio oculto */
-        #background-audio {
-            display: none;
-        }
-        
-        /* Notificación de audio */
-        .audio-notification {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            background-color: rgba(44, 62, 80, 0.9);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
+        /* Texto al lado del botón */
+        .audio-control-text {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 25px;
             font-size: 14px;
-            z-index: 999;
-            max-width: 300px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.5s ease;
-            display: none;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            white-space: nowrap;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
         
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        .audio-notification button {
-            background: none;
-            border: none;
+        /* Indicador de audio activo */
+        .audio-indicator {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(0, 188, 212, 0.9);
             color: white;
-            font-weight: bold;
-            margin-left: 10px;
-            cursor: pointer;
-            text-decoration: underline;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 188, 212, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+        }
+        
+        .audio-indicator.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .audio-indicator .pulse {
+            width: 10px;
+            height: 10px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
         
         /* Para dispositivos móviles */
         @media (max-width: 768px) {
-            .audio-control-btn {
-                width: 50px;
-                height: 50px;
-                bottom: 15px;
+            .audio-control-container {
+                top: 15px;
                 right: 15px;
-                font-size: 20px;
+                gap: 8px;
             }
             
-            .audio-notification {
-                top: 60px;
-                right: 10px;
-                left: 10px;
-                max-width: none;
+            .section-audio-control {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+            
+            .audio-control-text {
+                font-size: 12px;
+                padding: 6px 12px;
+                white-space: normal;
+                max-width: 120px;
+            }
+            
+            .audio-indicator {
+                top: 15px;
+                left: 15px;
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .audio-control-text {
+                display: none; /* Ocultar texto en móviles muy pequeños */
             }
         }
     </style>
 </head>
 <body>
-    <!-- Audio de fondo que se reproduce automáticamente -->
-    <audio id="background-audio" autoplay loop>
-        <source src="shikumen-background-sound.mp3" type="audio/mp3">
-        <source src="shikumen-background-sound.ogg" type="audio/ogg">
-        Tu navegador no soporta el elemento de audio.
-    </audio>
-    
-    <!-- Botón de control de audio fijo -->
-    <button id="audioControlBtn" class="audio-control-btn" title="Controlar audio de fondo">
-        <i class="fas fa-volume-up"></i>
-    </button>
-    
-    <!-- Notificación de audio -->
-    <div id="audioNotification" class="audio-notification">
-        Se está reproduciendo audio de fondo. 
-        <button id="dismissAudioNotification">Entendido</button>
-    </div>
     
     <!-- Video Hero Section -->
     <nav class="w-100 bg-primary fixed-top p-0 shadow-sm">
@@ -181,10 +237,36 @@
     </section>
     
     <!-- Imagen a todo ancho con Tooltips -->
-    <section class="image-section full-width-image-section">
-         <video autoplay loop width="100%" poster="main-shikumen-clean.jpg" muted>
+    <section class="image-section full-width-image-section" id="mainImageSection">
+        <!-- Audio específico para esta sección -->
+        <audio id="image-section-audio" loop>
+            <source src="shikumen-background-sound.mp3" type="audio/mp3">
+            Tu navegador no soporta el elemento de audio.
+        </audio>
+        
+        <!-- Contenedor del control de audio -->
+        <div id="audioControlContainer" class="audio-control-container">
+            <!-- Botón de control de audio -->
+            <button id="sectionAudioControlBtn" class="section-audio-control" title="Activar/desactivar audio ambiental">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            
+            <!-- Texto al lado del botón -->
+            <div class="audio-control-text">
+                Activate ambient audio
+            </div>
+        </div>
+        
+        <!-- Indicador de audio activo -->
+        <div id="audioIndicator" class="audio-indicator">
+            <span class="pulse"></span>
+            Audio ambiental activo
+        </div>
+
+        <img src="main-shikumen-clean.jpg" alt="The shikumen inside" class="d-md-none w-100">
+        <video autoplay loop width="100%" poster="main-shikumen-clean.jpg" muted class="d-none d-md-block w-100">
             <source src="shikumen-live-ok.mp4" type="video/mp4">
-        </video>
+        </video>        
         
         <!-- Marcadores con tooltips -->
         <div class="marker" style="top: 55%; left: 18%;" data-tooltip="1">
@@ -221,7 +303,7 @@
                 <h3>Staircase</h3>
                 <p>A narrow, often steep, wooden staircase connecting the floors. It is usually tucked away in a corner behind the parlor, leading to the upper living room, loft and garret.</p>
             </div>
-</div>
+        </div>
         
         <div class="marker" style="top: 75%; left: 75%;" data-tooltip="5">
             <span>5</span>
@@ -404,86 +486,200 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // ==============================================
-            // CONTROL DE AUDIO DE FONDO
+            // CONTROL DE AUDIO PARA LA SECCIÓN DE IMAGEN GRANDE
             // ==============================================
-            const backgroundAudio = document.getElementById('background-audio');
-            const audioControlBtn = document.getElementById('audioControlBtn');
-            const audioNotification = document.getElementById('audioNotification');
-            const dismissAudioNotification = document.getElementById('dismissAudioNotification');
+            const imageSectionAudio = document.getElementById('image-section-audio');
+            const sectionAudioControlBtn = document.getElementById('sectionAudioControlBtn');
+            const audioControlContainer = document.getElementById('audioControlContainer');
+            const audioIndicator = document.getElementById('audioIndicator');
+            const mainImageSection = document.getElementById('mainImageSection');
             
-            let isAudioPlaying = true;
-            let userInteracted = false;
+            let isSectionAudioPlaying = false;
+            let audioStarted = false;
+            let userInteractedWithPage = false;
             
-            // Mostrar notificación de audio después de 2 segundos
-            setTimeout(() => {
-                if (isAudioPlaying && !localStorage.getItem('audioNotificationDismissed')) {
-                    audioNotification.style.display = 'block';
-                    setTimeout(() => {
-                        audioNotification.style.display = 'none';
-                    }, 10000); // Ocultar después de 10 segundos
+            console.log("Script loaded - Audio control initialized");
+            
+            // Función para actualizar la apariencia del botón
+            function updateSectionAudioButton() {
+                if (isSectionAudioPlaying) {
+                    sectionAudioControlBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    sectionAudioControlBtn.classList.remove('muted');
+                    sectionAudioControlBtn.title = 'Desactivar audio ambiental';
+                    audioIndicator.classList.add('visible');
+                    
+                    // Actualizar texto al lado del botón
+                    const textElement = document.querySelector('.audio-control-text');
+                    if (textElement) {
+                        textElement.textContent = 'Ambient audio active';
+                    }
+                } else {
+                    sectionAudioControlBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    sectionAudioControlBtn.classList.add('muted');
+                    sectionAudioControlBtn.title = 'Activar audio ambiental';
+                    audioIndicator.classList.remove('visible');
+                    
+                    // Actualizar texto al lado del botón
+                    const textElement = document.querySelector('.audio-control-text');
+                    if (textElement) {
+                        textElement.textContent = 'Activate ambient audio';
+                    }
                 }
-            }, 2000);
+            }
             
-            // Descartar notificación
-            dismissAudioNotification.addEventListener('click', function() {
-                audioNotification.style.display = 'none';
-                localStorage.setItem('audioNotificationDismissed', 'true');
+            // Función para mostrar los controles de audio
+            function showAudioControls() {
+                audioControlContainer.classList.add('visible');
+            }
+            
+            // Función para ocultar los controles de audio
+            function hideAudioControls() {
+                audioControlContainer.classList.remove('visible');
+            }
+            
+            // Función para alternar audio al hacer clic en el botón
+            sectionAudioControlBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log("Audio button clicked, current state:", isSectionAudioPlaying);
+                
+                if (isSectionAudioPlaying) {
+                    imageSectionAudio.pause();
+                    isSectionAudioPlaying = false;
+                    console.log("Audio paused");
+                } else {
+                    // Configurar volumen
+                    imageSectionAudio.volume = 0.3;
+                    imageSectionAudio.play().then(() => {
+                        isSectionAudioPlaying = true;
+                        console.log("Audio playing successfully");
+                    }).catch(error => {
+                        console.error("Error playing audio:", error);
+                        // Mostrar mensaje para el usuario
+                        alert("Para reproducir el audio ambiental, por favor haz clic primero en cualquier parte de la página");
+                    });
+                }
+                updateSectionAudioButton();
             });
             
-            // Intentar reproducir audio automáticamente
-            function playBackgroundAudio() {
-                if (backgroundAudio) {
-                    backgroundAudio.play().then(() => {
-                        console.log("Audio de fondo se está reproduciendo");
-                        isAudioPlaying = true;
-                        updateAudioButton();
-                    }).catch(e => {
-                        console.log("Autoplay de audio restringido:", e);
-                        // Si falla el autoplay, esperar interacción del usuario
-                        document.addEventListener('click', initAudioOnUserInteraction, { once: true });
-                        document.addEventListener('keydown', initAudioOnUserInteraction, { once: true });
+            // Función para iniciar audio de la sección automáticamente
+            function startSectionAudio() {
+                if (imageSectionAudio && !audioStarted && userInteractedWithPage) {
+                    console.log("Starting section audio automatically...");
+                    
+                    // Configurar volumen
+                    imageSectionAudio.volume = 0.3;
+                    
+                    imageSectionAudio.play().then(() => {
+                        console.log("Section audio started successfully");
+                        isSectionAudioPlaying = true;
+                        audioStarted = true;
+                        updateSectionAudioButton();
+                        showAudioControls();
+                    }).catch(error => {
+                        console.error("Error starting section audio automatically:", error);
+                        // Mostrar controles para que el usuario pueda activarlo manualmente
+                        showAudioControls();
                     });
                 }
             }
             
-            // Inicializar audio cuando el usuario interactúe
+            // Detectar cuando el usuario llega a la sección de imagen grande
+            function checkScrollForAudio() {
+                if (!audioStarted && userInteractedWithPage) {
+                    const rect = mainImageSection.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+                    
+                    // Verificar si la sección está visible en la ventana (al menos 40% visible)
+                    const sectionTop = rect.top;
+                    const sectionBottom = rect.bottom;
+                    const sectionHeight = rect.height;
+                    
+                    // Calcular porcentaje de visibilidad
+                    const visibleHeight = Math.min(sectionBottom, windowHeight) - Math.max(sectionTop, 0);
+                    const visiblePercentage = (visibleHeight / sectionHeight) * 100;
+                    
+                    if (visiblePercentage >= 40) {
+                        console.log("Section is sufficiently visible (", visiblePercentage.toFixed(1), "%), starting audio");
+                        startSectionAudio();
+                        // Remover el event listener después de activar el audio
+                        window.removeEventListener('scroll', checkScrollForAudio);
+                    }
+                }
+            }
+            
+            // Marcar interacción del usuario con la página
             function initAudioOnUserInteraction() {
-                if (!userInteracted) {
-                    userInteracted = true;
-                    backgroundAudio.play().then(() => {
-                        isAudioPlaying = true;
-                        updateAudioButton();
-                    });
+                if (!userInteractedWithPage) {
+                    userInteractedWithPage = true;
+                    console.log("User interacted with page");
+                    
+                    // Mostrar controles inmediatamente
+                    showAudioControls();
+                    
+                    // Comenzar a verificar el scroll para activar audio
+                    window.addEventListener('scroll', checkScrollForAudio);
+                    
+                    // Verificar inmediatamente por si ya está en la posición correcta
+                    setTimeout(checkScrollForAudio, 100);
                 }
             }
             
-            // Actualizar apariencia del botón
-            function updateAudioButton() {
-                if (isAudioPlaying) {
-                    audioControlBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-                    audioControlBtn.classList.remove('muted');
-                    audioControlBtn.title = 'Silenciar audio de fondo';
-                } else {
-                    audioControlBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-                    audioControlBtn.classList.add('muted');
-                    audioControlBtn.title = 'Activar audio de fondo';
-                }
-            }
+            // Escuchar interacciones del usuario
+            document.addEventListener('click', initAudioOnUserInteraction);
+            document.addEventListener('keydown', initAudioOnUserInteraction);
+            document.addEventListener('touchstart', initAudioOnUserInteraction);
             
-            // Alternar audio al hacer clic en el botón
-            audioControlBtn.addEventListener('click', function() {
-                if (isAudioPlaying) {
-                    backgroundAudio.pause();
-                    isAudioPlaying = false;
-                } else {
-                    backgroundAudio.play();
-                    isAudioPlaying = true;
-                }
-                updateAudioButton();
+            // Mostrar controles cuando el mouse está sobre la sección
+            mainImageSection.addEventListener('mouseenter', function() {
+                showAudioControls();
             });
             
-            // Iniciar reproducción de audio
-            playBackgroundAudio();
+            mainImageSection.addEventListener('mouseleave', function() {
+                // Solo ocultar si el audio no está reproduciéndose
+                if (!isSectionAudioPlaying) {
+                    setTimeout(() => {
+                        if (!mainImageSection.matches(':hover')) {
+                            hideAudioControls();
+                        }
+                    }, 1000);
+                }
+            });
+            
+            // Verificar visibilidad de controles al hacer scroll
+            function checkAudioControlsVisibility() {
+                const rect = mainImageSection.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                
+                // Mostrar controles si la sección está visible
+                if (rect.top < windowHeight && rect.bottom > 0) {
+                    showAudioControls();
+                } else if (!isSectionAudioPlaying) {
+                    // Ocultar controles si la sección no es visible y el audio no está activo
+                    hideAudioControls();
+                }
+            }
+            
+            // Verificar visibilidad al cargar
+            setTimeout(checkAudioControlsVisibility, 500);
+            
+            // Verificar visibilidad de controles al hacer scroll
+            window.addEventListener('scroll', checkAudioControlsVisibility);
+            
+            // Manejar cuando el audio termina o tiene errores
+            imageSectionAudio.addEventListener('ended', function() {
+                console.log("Audio ended");
+                isSectionAudioPlaying = false;
+                updateSectionAudioButton();
+            });
+            
+            imageSectionAudio.addEventListener('error', function(e) {
+                console.error("Audio error:", e);
+                isSectionAudioPlaying = false;
+                updateSectionAudioButton();
+            });
+            
+            // Inicializar el botón (audio apagado al inicio)
+            updateSectionAudioButton();
             
             // ==============================================
             // CÓDIGO EXISTENTE PARA TOOLTIPS Y CARRUSEL
